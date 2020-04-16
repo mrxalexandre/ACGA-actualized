@@ -1,7 +1,7 @@
 # Macros:
 CPP= g++
 CFLAGS= -O3 -fopenmp
-OBJECTS= SampleDecoder.o main.o bossa_timer.o
+OBJECTS= SampleDecoder.o main.o bossa_timer.o ArgPack.o
 
 # Targets:
 all: main
@@ -14,6 +14,9 @@ SampleDecoder.o: SampleDecoder.cpp
 
 bossa_timer.o: bossa_timer.cpp
 	$(CPP) $(CFLAGS) -c bossa_timer.cpp
+
+ArgPack.o: ArgPack.cpp
+	$(CPP) $(CFLAGS) -c ArgPack.cpp
 
 # Remove:
 clean:

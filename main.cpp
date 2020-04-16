@@ -5,20 +5,25 @@
 #include "MTRand.h"
 #include "BRKGA.h"
 #include "bossa_timer.h"
+#include "ArgPack.hpp"
 
 std::vector<std::vector<double> > points;
 
 int main(int argc, char* argv[]) {
 
-	
 
+	ArgPack single_ap(argc, argv);
+
+//ArgPack::ap().time
 	unsigned n = 0;			// size of chromosomes
-	const unsigned p = 10;		// size of population
-	const double pe = 0.15;		// fraction of population to be the elite-set
-	const double pm = 0.05;		// fraction of population to be replaced by mutants
-	const double rhoe = 0.80;	// probability that offspring inherit an allele from elite parent
-	const unsigned K = 3;		// number of independent populations
-	const unsigned MAXT = 2;	// number of threads for parallel decoding
+	const unsigned p = ArgPack::ap().population;		// size of population
+	const double pe = ArgPack::ap().populationElite;		// fraction of population to be the elite-set
+	const double pm = ArgPack::ap().populationMutants;		// fraction of population to be replaced by mutants
+	const double rhoe = ArgPack::ap().rhoe;	// probability that offspring inherit an allele from elite parent
+	const unsigned K = ArgPack::ap().K;		// number of independent populations
+	const unsigned MAXT = ArgPack::ap().threads;	// number of threads for parallel decoding
+
+	const double cutoff_time = ArgPack::ap().time;
 
 	// Reading instance
 	std::string s;
@@ -53,38 +58,35 @@ int main(int argc, char* argv[]) {
 			//if(CLUSTER_U[d] < points[i][d])
 				//CLUSTER_U[d]  = points[i][d]; //Max da dim
 		}
-
-
-
 	}
 
-	
-	
 
 
 	SampleDecoder decoder;			// initialize the decoder
 
 
 
-	const long unsigned rngSeed = 0;	// seed to the random number generator
+	const long unsigned rngSeed = ArgPack::ap().rngSeed;	// seed to the random number generator
 	MTRand rng(rngSeed);				// initialize the random number generator
 
 	n = n_points+1;
-	
+
 	// initialize the BRKGA-based heuristic
 
 
 	BossaTimer timer;
 	timer.start();
-	
+
 	double bestValue = -1;
 	double timerToBest;
 	BRKGA< SampleDecoder, MTRand > algorithm(n, p, pe, pm, rhoe, decoder, rng, K, MAXT);
 
 	unsigned generation = 0;		// current generation
-	const unsigned X_INTVL = 100;	// exchange best individuals at every 100 generations
-	const unsigned X_NUMBER = 2;	// exchange top 2 best
-	const unsigned MAX_GENS = 50;	// run for 1000 gens
+	const unsigned X_INTVL =  ArgPack::ap().exchangeBest;	// exchange best individuals at every 100 generations
+
+
+	const unsigned X_NUMBER = ArgPack::ap().exchangeTop;	// exchange top 2 best
+	const unsigned MAX_GENS = ArgPack::ap().generations;	// run for 1000 gens
 	do {
 		algorithm.evolve();	// evolve the population for one generation
 
@@ -94,13 +96,13 @@ int main(int argc, char* argv[]) {
 
 		std::cout << "It " << generation << "Best objective value = "
 	 		<< (-1)*algorithm.getBestFitness() << std::endl;
-	
-	if(bestValue < (-1)*algorithm.getBestFitness()){
-		bestValue = (-1)*algorithm.getBestFitness();
-		timerToBest = timer.getTime();
+
+		if(bestValue < (-1)*algorithm.getBestFitness()){
+			bestValue = (-1)*algorithm.getBestFitness();
+			timerToBest = timer.getTime();
 		}
 
-	} while (generation < MAX_GENS);
+	} while (generation < MAX_GENS and timer.getTime() < cutoff_time);
 	timer.pause();
 
 	std::cout << "Best solution found has objective value = "

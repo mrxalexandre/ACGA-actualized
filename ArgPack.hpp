@@ -24,6 +24,8 @@ public:
 	unsigned exchangeTop; // Exchange top 2 best
 	unsigned generations; // Run for 1000 generations
 
+	bool verbose;
+
 	//------------
 	// singleton functions
 	//------------

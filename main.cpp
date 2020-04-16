@@ -85,6 +85,7 @@ int main(int argc, char* argv[]) {
 	const unsigned X_INTVL =  ArgPack::ap().exchangeBest;	// exchange best individuals at every 100 generations
 
 
+	bool verbose = ArgPack::ap().verbose;
 	const unsigned X_NUMBER = ArgPack::ap().exchangeTop;	// exchange top 2 best
 	const unsigned MAX_GENS = ArgPack::ap().generations;	// run for 1000 gens
 	do {
@@ -94,8 +95,9 @@ int main(int argc, char* argv[]) {
 			algorithm.exchangeElite(X_NUMBER);	// exchange top individuals
 		}
 
-		std::cout << "It " << generation << "Best objective value = "
-	 		<< (-1)*algorithm.getBestFitness() << std::endl;
+		if(verbose)
+			std::cout << "It " << generation << "Best objective value = "
+				<< (-1)*algorithm.getBestFitness() << std::endl;
 
 		if(bestValue < (-1)*algorithm.getBestFitness()){
 			bestValue = (-1)*algorithm.getBestFitness();
@@ -106,9 +108,13 @@ int main(int argc, char* argv[]) {
 	timer.pause();
 
 	std::cout << "Best solution found has objective value = "
-	 		<< (-1)*algorithm.getBestFitness() << std::endl;
+	 		<< (1)*algorithm.getBestFitness() << std::endl;
 		std::cout << "Total time = " << timer.getTime() << std::endl;
 		std::cout << "Time to Best ttb = " << timerToBest << std::endl;
+
+		unsigned kmax = sqrt(n);
+		unsigned ncluster = algorithm.getBestChromosome()[n-1]* ((kmax - 2) +1) + 2; // TODO Verificar
+		std::cout << "Number of clusters = " << ncluster << std::endl;
 
 
 	return 0;

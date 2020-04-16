@@ -16,6 +16,7 @@ static void show_usage(string name)
 			<< "Options:\n"
 			<< "\t-h,--help\t\tShow this help message\n"
 			<< "\t-i,--input Input file\tSpecify the destination path\n"
+			<< "\t-v,--verbose \n"
 			<< "\t-s,--seed Pseudo number generator seed\n"
 			<< "\t-p,--population Population\tSize of population\n"
 			<< "\t-e,--population-elite Population elite-set\tFraction of population to be the elite-set\n"
@@ -23,6 +24,8 @@ static void show_usage(string name)
 			<< "\t-r,--rhoe Inherits allele\tProbability offspring inherits elite parent allele\n"
 			<< "\t-K,--K Independent populations\tNumber of independent populations\n"
 			<< "\t-t,--threads Threads\tNumber of threads for parallel decoding\n"
+			<< "\t-b,--exchangeBest\texchange the best individuals \n"
+			<< "\t-x,--exchangeTop \t exchange the top individuals\n"
 			<< "\t-T,--time Time\tCPU-time (in secondes)\n"
 			<< "\t-g,--generations Generations\tNumber of threads for parallel decoding\n"
 			;
@@ -43,7 +46,9 @@ ArgPack::ArgPack(int argc, char * const argv []) :
 	rngSeed(0),
 	exchangeBest(100),
 	exchangeTop(2),
-	generations(1000){
+	generations(1000),
+	verbose(false){
+
 
 	assert(!def_ap_);
 	def_ap_ = this;
@@ -58,6 +63,14 @@ ArgPack::ArgPack(int argc, char * const argv []) :
 		} else if(arg == "-i" or arg == "--input") {
 			try {
 				inputFile = argv[++i];
+			}
+			catch (...)	{
+				cerr << "Unknown exception caught!" << endl;
+				error = true;
+			}
+		} else if (arg == "-v" or arg == "--verbose"){
+			try {
+				verbose = true;
 			}
 			catch (...)	{
 				cerr << "Unknown exception caught!" << endl;
@@ -173,7 +186,7 @@ ArgPack::ArgPack(int argc, char * const argv []) :
 		} else if(arg == "-x" or arg == "--exchange-top"){
 			try {
 				value = argv[++i];
-				generations = stoi(value, nullptr, 10);
+				exchangeTop = stoi(value, nullptr, 10);
 			}
 			catch (...)	{
 				error = true;
@@ -188,7 +201,7 @@ ArgPack::ArgPack(int argc, char * const argv []) :
 	if( !error ){
 		if( inputFile == "" ){
 			error = true;
-			cerr << "Missing parameters!" << endl;
+			//cerr << "Missing parameters!" << endl;
 		}
 		if( !error ){
 			if( outputFile == "" ){

@@ -1,6 +1,6 @@
 # Macros:
 CPP= g++
-CFLAGS= -O3 -fopenmp
+CFLAGS= -O3 -fopenmp -g
 OBJECTS= SampleDecoder.o main.o bossa_timer.o ArgPack.o
 
 # Targets:

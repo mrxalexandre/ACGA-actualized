@@ -39,7 +39,7 @@ inline double b(unsigned i, unsigned w, std::vector<std::vector<unsigned> >& clu
 	for(unsigned t=0; t<tam; ++t) {
 		unsigned tam_w = cluster[t].size();
 
-		if(tam_w == 0 or t == w) continue; // Se Cluster w for vazio e t !=w 
+		if(tam_w == 0 or t == w) continue; // Se Cluster w for vazio e t !=w
 
 		double sum = 0.0;
 		for(unsigned &j : cluster[t]) {
@@ -77,15 +77,15 @@ inline double a(unsigned i, std::vector<unsigned>& Cw) {
 
 int closerst_cluster(std::vector<std::vector<unsigned>>& clusters,unsigned point, std::vector< std::pair< double, unsigned > > &ranking, unsigned k) {
 
-	unsigned bestcluster = 0;		
-	double bestdist = 99999999999.0;		
-	
+	unsigned bestcluster = 0;
+	double bestdist = 99999999999.0;
+
 	for(unsigned j = 0; j < k; j++){
 		double sum = 0.0;
 
 		for(unsigned c: clusters[j]){
 			sum += d(point, c);
-	
+
 		}
 
 		if(sum/clusters[j].size() < bestdist){
@@ -95,7 +95,7 @@ int closerst_cluster(std::vector<std::vector<unsigned>>& clusters,unsigned point
 		}
 
 	}
-	
+
 	return bestcluster;
 
 
@@ -105,13 +105,13 @@ int closerst_cluster(std::vector<std::vector<unsigned>>& clusters,unsigned point
 double SampleDecoder::decode(const std::vector< double >& chromosome) const {
 
 	unsigned n_points = points.size();
-	unsigned kmax = sqrt(n_points);
-	unsigned k = chromosome[n_points] * ((kmax - 2) +1) + 2; // TODO Verificar
-	
+
+	unsigned k = number_of_cluster;
+
 	std::vector<unsigned> cluster_of_i(n_points + 1,0);
 	std::vector<std::vector<unsigned>> clusters(k);
-	std::vector< std::pair< double, unsigned > > ranking(chromosome.size()-1);
-	for(unsigned i = 0; i < chromosome.size()-1; ++i) {
+	std::vector< std::pair< double, unsigned > > ranking(chromosome.size());
+	for(unsigned i = 0; i < chromosome.size(); ++i) {
 		ranking[i] = std::pair< double, unsigned >(chromosome[i], i);
 
 	}
@@ -120,7 +120,7 @@ double SampleDecoder::decode(const std::vector< double >& chromosome) const {
 
 	for(unsigned i=0; i < k; ++i) {
 		unsigned point = ranking[i].second; //ranking second é o indice do pnt
-		clusters[i].push_back(point); 
+		clusters[i].push_back(point);
 		cluster_of_i[point] = i;
 	}
 
@@ -128,11 +128,11 @@ double SampleDecoder::decode(const std::vector< double >& chromosome) const {
 
 
 		unsigned point = ranking[i].second;
-		unsigned c_i = closerst_cluster(clusters, point, ranking,k); 
+		unsigned c_i = closerst_cluster(clusters, point, ranking,k);
 		clusters[c_i].push_back(point);
 		cluster_of_i[point] = c_i;
 
-	
+
 	}
 
 	double silhueta = 0.0;

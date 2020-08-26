@@ -29,7 +29,13 @@ public:
 
 	double decode(const std::vector< double >& chromosome) const;
 
+	void set_k (int k) {
+		number_of_cluster = k;
+	}
+
+
 private:
+	int number_of_cluster;
 };
 
 #endif

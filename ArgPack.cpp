@@ -39,8 +39,8 @@ ArgPack::ArgPack(int argc, char * const argv []) :
 	populationElite(0.2),
 	populationMutants(0.1),
 	rhoe(0.7),
-	K(3),
-	threads(4),
+	K(1),
+	threads(1),
 	time(100000.0),
 
 	rngSeed(0),
@@ -60,6 +60,7 @@ ArgPack::ArgPack(int argc, char * const argv []) :
 		string arg = argv[i];
 		if( arg == "-h" or arg == "--help" ){
 			show_usage(programName);
+			exit(0);
 		} else if(arg == "-i" or arg == "--input") {
 			try {
 				inputFile = argv[++i];
